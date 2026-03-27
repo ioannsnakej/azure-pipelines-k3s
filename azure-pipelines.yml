@@ -9,12 +9,20 @@ trigger:
 pool:
   name: self-hosted
 
-steps:
+stages:
+  - stage: checkout
+    jobs:
+      - job: CheckoutJob
+        steps:
+          - script: |
+              ls -la $(Build.SourcesDirectory)
+              echo "the repo is here"
+            displayName: 'Check repo'
 
-- script: echo "Hello from my self-hosted agent!"
-  displayName: 'Test agent'
-
-- script: |
-    docker --version
-    python3 --version
-  displayName: 'Check tools'
+  - stage: build
+    jobs:
+      - job: BuildJob
+        steps:
+          - script: |
+              docker build -t hello-app:$(Build.BuildId) $(Build.SourcesDirectory)
+            displayName: 'Build Image'
