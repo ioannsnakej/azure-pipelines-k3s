@@ -11,7 +11,7 @@ pool:
 
 variables:
   DOCKER_USER: 'ivankhodyrev'
-  IMAGE: 'hello-app:$(Build.BuildId)''
+  IMAGE: 'hello-app:$(Build.BuildId)'
 
 stages:
   - stage: Build
