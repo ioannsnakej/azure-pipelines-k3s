@@ -9,20 +9,25 @@ trigger:
 pool:
   name: self-hosted
 
-stages:
-  - stage: checkout
-    jobs:
-      - job: CheckoutJob
-        steps:
-          - script: |
-              ls -la $(Build.SourcesDirectory)
-              echo "the repo is here"
-            displayName: 'Check repo'
+variables:
+  DOCKER_USER: 'ivankhodyrev'
+  IMAGE: 'hello-app:$(Build.BuildId)''
 
-  - stage: build
+stages:
+  - stage: Build
     jobs:
       - job: BuildJob
         steps:
           - script: |
-              docker build -t hello-app:$(Build.BuildId) $(Build.SourcesDirectory)
+              docker build -t $(IMAGE) .
             displayName: 'Build Image'
+            workingDirectory: $(Build.SourcesDirectory)
+  - stage: PushImage
+    dependsOn: Build
+    jobs:
+      - job: PushImageJob
+        steps:
+          - script: |
+              docker login -u $(DOCKER_USER) -p $(DOCKER_TOKEN)
+              docker push $(DOCKER_USER)/$(IMAGE)
+            displayName: 'Push Image'
