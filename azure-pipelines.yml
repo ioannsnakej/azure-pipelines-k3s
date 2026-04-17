@@ -20,6 +20,7 @@ stages:
         steps:
           - script: |
               docker build -t $(IMAGE) .
+              docker tag $(IMAGE) $(DOCKER_USER)/$(IMAGE)
             displayName: 'Build Image'
             workingDirectory: $(Build.SourcesDirectory)
   - stage: PushImage
