@@ -1,0 +1,11 @@
+replicaCount: 2
+image:
+  repository: ivankhodyrev/hello-app
+  tag: latest
+  pullPolice: IfNotPresent
+service:
+  port: 8001
+  tergetPort: 5000
+ingress:
+  enabled: true
+  host: hello-app.local
