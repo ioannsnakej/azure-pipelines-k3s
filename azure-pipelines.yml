@@ -1,0 +1,46 @@
+# Python package
+# Create and test a Python package on multiple Python versions.
+# Add steps that analyze code, save the dist with the build record, publish to a PyPI-compatible index, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/python
+
+trigger:
+- main
+
+pool:
+  name: self-hosted
+
+variables:
+  DOCKER_USER: 'ivankhodyrev'
+  IMAGE: 'hello-app'
+  TAG: '$(Build.BuildId)'
+
+stages:
+  - stage: Build
+    jobs:
+      - job: BuildJob
+        steps:
+          - script: |
+              docker build -t $(DOCKER_USER)/$(IMAGE):$(TAG) .
+            displayName: 'Build Image'
+            workingDirectory: $(Build.SourcesDirectory)
+  - stage: PushImage
+    dependsOn: Build
+    jobs:
+      - job: PushImageJob
+        steps:
+          - script: |
+              docker login -u $(DOCKER_USER) -p $(DOCKER_TOKEN)
+              docker push $(DOCKER_USER)/$(IMAGE):$(TAG)
+            displayName: 'Push Image'
+  - stage: Deploy
+    dependsOn: PushImage
+    jobs:
+      - job: DeployApp
+        steps:
+          - script: |
+              helm upgrade --install hello-app ./helm/hello-app \
+                --namespace service-nodeport \
+                --set image.repository=$(DOCKER_USER)/$(IMAGE) \
+                --set image.tag=$(TAG) \
+                --set service.type=NodePort
+            displayName: 'Deploy App to k3s'

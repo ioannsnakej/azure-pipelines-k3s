@@ -1,0 +1,10 @@
+replicaCount: 2
+image:
+  repository: ivankhodyrev/hello-app
+  tag: latest
+  pullPolicy: IfNotPresent
+service:
+  type: NodePort
+  port: 8001
+  targetPort: 5000
+  nodePort: 30080
