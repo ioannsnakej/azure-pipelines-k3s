@@ -20,8 +20,7 @@ stages:
       - job: BuildJob
         steps:
           - script: |
-              docker build -t $(IMAGE) .
-              docker tag $(IMAGE):$(TAG) $(DOCKER_USER)/$(IMAGE):$(TAG)
+              docker build -t $(DOCKER_USER)/$(IMAGE):$(TAG) .
             displayName: 'Build Image'
             workingDirectory: $(Build.SourcesDirectory)
   - stage: PushImage
@@ -41,7 +40,7 @@ stages:
           - script: |
               helm upgrade --install hello-app ./helm/hello-app \
                 --namespace service-nodeport \
-                --set image.tag=$(TAG) \
                 --set image.repository=$(DOCKER_USER)/$(IMAGE) \
+                --set image.tag=$(TAG) \
                 --set service.type=NodePort
             displayName: 'Deploy App to k3s'
