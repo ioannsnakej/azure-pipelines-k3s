@@ -3,9 +3,12 @@ kind: Service
 metadata:
   name: {{ include "hello-app.fullname" . }}
 spec:
+  type: {{ .Values.service.type }}
   selector:
     app: {{ include "hello-app.name" . }}
   ports:
   - port: {{ .Values.service.port }}
     targetPort: {{ .Values.service.targetPort }}
-  type: ClusterIP
+    {{- if eq .Values.service.type "NodePort" }}
+    nodePort: {{ .Values.service.nodePort }}
+    {{ -end }}

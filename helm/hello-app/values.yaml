@@ -2,10 +2,12 @@ replicaCount: 2
 image:
   repository: ivankhodyrev/hello-app
   tag: latest
-  pullPolice: IfNotPresent
+  pullPolicy: IfNotPresent
 service:
+  type: NodePort
   port: 8001
-  tergetPort: 5000
+  targetPort: 5000
+  nodePort: 30080
 ingress:
   enabled: true
   host: hello-app.local
