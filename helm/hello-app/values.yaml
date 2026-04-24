@@ -8,6 +8,3 @@ service:
   port: 8001
   targetPort: 5000
   nodePort: 30080
-ingress:
-  enabled: true
-  host: hello-app.local

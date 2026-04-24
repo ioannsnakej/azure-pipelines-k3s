@@ -11,7 +11,8 @@ pool:
 
 variables:
   DOCKER_USER: 'ivankhodyrev'
-  IMAGE: 'hello-app:$(Build.BuildId)'
+  IMAGE: 'hello-app'
+  TAG: '$(Build.BuildId)'
 
 stages:
   - stage: Build
@@ -20,7 +21,7 @@ stages:
         steps:
           - script: |
               docker build -t $(IMAGE) .
-              docker tag $(IMAGE) $(DOCKER_USER)/$(IMAGE)
+              docker tag $(IMAGE):$(TAG) $(DOCKER_USER)/$(IMAGE):$(TAG)
             displayName: 'Build Image'
             workingDirectory: $(Build.SourcesDirectory)
   - stage: PushImage
@@ -30,5 +31,17 @@ stages:
         steps:
           - script: |
               docker login -u $(DOCKER_USER) -p $(DOCKER_TOKEN)
-              docker push $(DOCKER_USER)/$(IMAGE)
+              docker push $(DOCKER_USER)/$(IMAGE):$(TAG)
             displayName: 'Push Image'
+  - stage: Deploy
+    dependsOn: PushImage
+    jobs:
+      - job: DeployApp
+        steps:
+          - script: |
+              helm upgrade --install hello-app ./helm/hello-app \
+                --namespace service-nodeport \
+                --set image.tag=$(TAG) \
+                --set image.repository=$(DOCKER_USER)/$(IMAGE) \
+                --set service.type=NodePort
+            displayName: 'Deploy App to k3s'
