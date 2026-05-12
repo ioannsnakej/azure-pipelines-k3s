@@ -162,8 +162,7 @@
         - targets: ['192.168.56.4:9100']
 **datasource.yml:**
 
-apiVersion: 1
-
+    apiVersion: 1
     datasources:
     - name: Prometheus
     type: prometheus
