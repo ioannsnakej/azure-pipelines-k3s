@@ -89,6 +89,125 @@
 ![image.png](/.attachments/terminal192168565.png)
 ![image.png](/.attachments/terminal192168563.png)
 ![image.png](/.attachments/result_in_browser.png)
+
+# Мониторинг
+- поднял monitoring-server - еще одну ВМ и настроил внутренню сеть 192.168.56.10
+- установил туда docker
+
+## Настройка стека Prom+Grafana:
+
+### Cтруктура:
+
+    monitoring-server/
+    ├── blackbox
+    │   └── blackbox.yml
+    ├── compose.yaml
+    ├── grafana
+    │   └── datasource.yml
+    └── prometheus
+        └── prometheus.yml
+
+**compose.yaml:**
+
+    services:
+    prometheus:
+        image: prom/prometheus
+        command:
+        - '--config.file=/etc/prometheus/prometheus.yml'
+        volumes:
+        - ./prometheus:/etc/prometheus
+        - prom_data:/prometheus
+        ports:
+        - 9090:9090
+        restart: always
+
+    grafana:
+        image: grafana/grafana
+        ports:
+        - 3000:3000
+        restart: always
+        volumes:
+        - ./grafana:/etc/grafana/provisioning/datasources
+
+    blackbox:
+        image: prom/blackbox-exporter:latest
+        volumes:
+        - ./blackbox/blackbox.yml:/config/blackbox.yml
+        command:
+        - '--config.file=/config/blackbox.yml'
+        restart: unless-stopped
+        ports:
+        - "9115:9115"
+
+    volumes:
+    prom_data:
+**prometheus.yml:**
+
+    global:
+    scrape_interval: 15s
+    scrape_timeout: 10s
+    evaluation_interval: 15s
+
+    scrape_configs:
+    - job_name: prometheus
+        static_configs:
+        - targets: ['localhost:9090']
+
+    - job_name: 'node_exporter_azure_agent'
+        static_configs:
+        - targets: ['192.168.56.5:9100']
+
+    - job_name: 'node_exporter_worker'
+        static_configs:
+        - targets: ['192.168.56.4:9100']
+**datasource.yml:**
+
+apiVersion: 1
+
+    datasources:
+    - name: Prometheus
+    type: prometheus
+    url: http://prometheus:9090
+    isDefault: true
+    access: proxy
+    editable: true
+
+## Настройка exporter на azure-agent и k3s-worker:
+
+### Установка и запуск exporter'ов
+
+    wget https://github.com/prometheus/node_exporter/releases/download/v1.8.0/node_exporter-1.8.0.linux-amd64.tar.gz
+    tar xvf node_exporter-1.8.0.linux-amd64.tar.gz
+    sudo cp node_exporter-1.8.0.linux-amd64/node_exporter /usr/local/bin/
+    sudo useradd --no-create-home --shell /bin/false node_exporter
+
+### Создание systemd-unit для exporter (Выполняем на azure-agent и k3s-worker)
+
+    sudo vim /etc/systemd/system/node_exporter.service
+***
+    [Unit]
+    Description=Node Exporter
+    After=network.target
+
+    [Service]
+    User=node_exporter
+    Group=node_exporter
+    Type=simple
+    ExecStart=/usr/local/bin/node_exporter
+
+    [Install]
+    WantedBy=multi-user.target
+***
+    sudo systemctl daemon-reload
+    sudo systemctl start node_exporter
+    sudo systemctl enable node_exporter
+
+### Запуск мониторинга (Выполняю на monitoring-server):
+
+    cd monitoring-server/
+    docker compose up -d
+![image.png](/.attachments/composeps.png)
+![image.png](/.attachments/prometheustargets.png)
 ## Список источников:
 1. [Что такое Azure Pipelines](https://learn.microsoft.com/ru-ru/azure/devops/pipelines/get-started/what-is-azure-pipelines?view=azure-devops)  
 2. [Создание первого конвейера](https://learn.microsoft.com/ru-ru/azure/devops/pipelines/create-first-pipeline?view=azure-devops&tabs=java%2Cbrowser)
