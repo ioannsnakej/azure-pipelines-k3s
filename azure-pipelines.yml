@@ -37,11 +37,14 @@ stages:
     jobs:
       - deployment: DeployApp
         environment: WithApproval-hello-app
-        steps:
-          - script: |
-              helm upgrade --install hello-app ./helm/hello-app \
-                --namespace service-nodeport \
-                --set image.repository=$(DOCKER_USER)/$(IMAGE) \
-                --set image.tag=$(TAG) \
-                --set service.type=NodePort
-            displayName: 'Deploy App to k3s'
+        displayName: 'Deploy App to k3s'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - script: |
+                    helm upgrade --install hello-app ./helm/hello-app \
+                      --namespace service-nodeport \
+                      --set image.repository=$(DOCKER_USER)/$(IMAGE) \
+                      --set image.tag=$(TAG) \
+                      --set service.type=NodePort
