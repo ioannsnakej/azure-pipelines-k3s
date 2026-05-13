@@ -36,6 +36,7 @@ stages:
     dependsOn: PushImage
     jobs:
       - job: DeployApp
+        environment: WithApproval-hello-app
         steps:
           - script: |
               helm upgrade --install hello-app ./helm/hello-app \
