@@ -35,7 +35,7 @@ stages:
   - stage: Deploy
     dependsOn: PushImage
     jobs:
-      - job: DeployApp
+      - deployment: DeployApp
         environment: WithApproval-hello-app
         steps:
           - script: |
