@@ -90,6 +90,38 @@
 ![image.png](/.attachments/terminal192168563.png)
 ![image.png](/.attachments/result_in_browser.png)
 
+# Approvals
+
+## Создаем Enviroment во вкладке `Среды`  
+
+![image.png](/.attachments/WithApproval.png)
+![image.png](/.attachments/addApproval1.png)
+![image.png](/.attachments/addApproval2.png)
+
+## Дописываем `stage: Deploy` в `azure-pipelines.yml`
+
+    - stage: Deploy
+        dependsOn: PushImage
+        jobs:
+        - deployment: DeployApp
+            environment: WithApproval-hello-app
+            displayName: 'Deploy App to k3s'
+            strategy:
+            runOnce:
+                deploy:
+                steps:
+                    - script: |
+                        helm upgrade --install hello-app ./helm/hello-app \
+                        --namespace service-nodeport \
+                        --set image.repository=$(DOCKER_USER)/$(IMAGE) \
+                        --set image.tag=$(TAG) \
+                        --set service.type=NodePort
+
+## Запуск с Approvals
+
+![image.png](/.attachments/waiting.png)
+![image.png](/.attachments/done.png)
+
 # Мониторинг
 - поднял monitoring-server - еще одну ВМ и настроил внутренню сеть 192.168.56.10
 - установил туда docker
