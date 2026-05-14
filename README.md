@@ -243,9 +243,9 @@
 ### Import Дашбордов
 
 - переходим в Grafana (http://192.168.56.10:3000)
-- Нажимаем `Import dashboard`
+- Нажимаем `Import dashboard`  
 ![image.png](/.attachments/grafana.png)
-- Вводим ID: `1860` и нажимаем `Load`
+- Вводим ID: `1860` и нажимаем `Load`  
 ![image.png](/.attachments/ID_dashboard.png)
 - Оставляем все по дефолту и нажимаем `Import`
 - Любуемся результатом
@@ -284,9 +284,9 @@
         docker compose stop prometheus
         docker compose up -d prometheus
 
-На нашей рабочей машине выполняем обычный коммит и пуш.
+На нашей рабочей машине выполняем обычный коммит и пуш.  
 
-
+![image.png](/.attachments/hello-app-monitoring.png)
 ## Список источников:
 1. [Что такое Azure Pipelines](https://learn.microsoft.com/ru-ru/azure/devops/pipelines/get-started/what-is-azure-pipelines?view=azure-devops)  
 2. [Создание первого конвейера](https://learn.microsoft.com/ru-ru/azure/devops/pipelines/create-first-pipeline?view=azure-devops&tabs=java%2Cbrowser)
