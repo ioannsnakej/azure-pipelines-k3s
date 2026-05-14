@@ -253,6 +253,35 @@
 ![image.png](/.attachments/azure_agent_dashboard.png)
 ![image.png](/.attachments/worker_dashboard.png)
 
+### Добавление metrics в hello-app
+
+Дописываем:
+- `app.py`:
+
+
+        from prometheus_flask_exporter import PrometheusMetrics
+
+        metrics = PrometheusMetrics(app)
+
+- `requirements.txt`:
+
+        prometheus-flask-exporter
+
+- `monitoring-server/prometheus/prometheus.yml` на нашей ВМ monitoring-server:
+
+        - job_name: 'hello-app'
+            static_configs:
+            - targets: ['192.168.56.4:30080']
+            metrics_path: '/metrics'
+
+Выполняем на monitoring-server:
+
+        docker compose stop prometheus
+        docker compose up -d prometheus
+
+На нашей рабочей машине выполняем обычный коммит и пуш.
+
+
 ## Список источников:
 1. [Что такое Azure Pipelines](https://learn.microsoft.com/ru-ru/azure/devops/pipelines/get-started/what-is-azure-pipelines?view=azure-devops)  
 2. [Создание первого конвейера](https://learn.microsoft.com/ru-ru/azure/devops/pipelines/create-first-pipeline?view=azure-devops&tabs=java%2Cbrowser)
@@ -268,3 +297,4 @@
 12. [Monitoring Linux host metrics with the Node Exporter | Prometheus](https://prometheus.io/docs/guides/node-exporter/)
 13. [Node Exporter Full](https://grafana.com/grafana/dashboards/1860-node-exporter-full/)
 14. [Как мониторить Jenkins с помощью Prometheus, Node exporter и Grafana](https://habr.com/ru/companies/slurm/articles/788836/)
+15. [Мониторинг микросервисов Flask с помощью Prometheus](https://habr.com/ru/articles/518122/)
