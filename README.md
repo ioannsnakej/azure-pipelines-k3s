@@ -240,6 +240,19 @@
 ![image.png](/.attachments/composeps.png)
 ![image.png](/.attachments/prometheustargets.png)
 
+### Import Дашбордов
+
+- переходим в Grafana (http://192.168.56.10:3000)
+- Нажимаем `Import dashboard`
+![image.png](/.attachments/grafana.png)
+- Вводим ID: `1860` и нажимаем `Load`
+![image.png](/.attachments/ID_dashboard.png)
+- Оставляем все по дефолту и нажимаем `Import`
+- Любуемся результатом
+
+![image.png](/.attachments/azure_agent_dashboard.png)
+![image.png](/.attachments/worker_dashboard.png)
+
 ## Список источников:
 1. [Что такое Azure Pipelines](https://learn.microsoft.com/ru-ru/azure/devops/pipelines/get-started/what-is-azure-pipelines?view=azure-devops)  
 2. [Создание первого конвейера](https://learn.microsoft.com/ru-ru/azure/devops/pipelines/create-first-pipeline?view=azure-devops&tabs=java%2Cbrowser)
@@ -252,3 +265,6 @@
 9. [Как развернуть приложение с помощью Helm в Kubernetes](https://selectel.ru/blog/tutorials/helm-charts-kubernetes/?ysclid=mo8e9lhndd747894795)
 10. [Типы сервисов в Kubernetes и их отличия](https://timeweb.cloud/tutorials/kubernetes/tipy-servisov-kubernetes-kak-vybrat?ysclid=moci5ydzy0145142682#nodeport)
 11. [Taints and Tolerations | Kubernetes](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/)
+12. [Monitoring Linux host metrics with the Node Exporter | Prometheus](https://prometheus.io/docs/guides/node-exporter/)
+13. [Node Exporter Full](https://grafana.com/grafana/dashboards/1860-node-exporter-full/)
+14. [Как мониторить Jenkins с помощью Prometheus, Node exporter и Grafana](https://habr.com/ru/companies/slurm/articles/788836/)
