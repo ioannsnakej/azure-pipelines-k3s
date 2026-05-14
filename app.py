@@ -7,7 +7,7 @@ metrics = PrometheusMetrics(app)
 
 @app.route('/metrics')
 def metrics():
-  return Response(prometheus_client_latest(), mimetype='text/plain')
+  return Response(prometheus_client.generate_latest(), mimetype='text/plain')
 
 @app.route('/')
 def hello_world():
