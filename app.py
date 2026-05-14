@@ -1,8 +1,13 @@
 from flask import Flask
 from prometheus_flask_exporter import PrometheusMetrics
+import prometheus_client
 
 app = Flask(__name__)
 metrics = PrometheusMetrics(app)
+
+@app.route('/metrics')
+def metrics():
+  return Response(prometheus_client_latest(), mimetype='text/plain')
 
 @app.route('/')
 def hello_world():

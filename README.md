@@ -260,8 +260,13 @@
 
 
         from prometheus_flask_exporter import PrometheusMetrics
+        import prometheus_client
 
         metrics = PrometheusMetrics(app)
+
+        @app.route('/metrics')
+        def metrics():
+            return Response(prometheus_client_latest(), mimetype='text/plain')
 
 - `requirements.txt`:
 
