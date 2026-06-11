@@ -1,3 +1,5 @@
+Этот проект демонстрирует полный CI/CD пайплайн с деплоем в k3s и мониторингом
+
 # Azure Pipelines:
 Предварительно: 
 - поднял три ВМ в VirtualBox:
@@ -22,10 +24,11 @@
     sudo netplan apply
 
 
-## [Мой pipeline](https://tfs.msk.evraz.com/tfs/%D0%A2%D0%B5%D1%81%D1%82%D0%BE%D0%B2%D0%B0%D1%8F%20%D0%BA%D0%BE%D0%BB%D0%BB%D0%B5%D0%BA%D1%86%D0%B8%D1%8F/Ivan-Khodyrev/_git/hello-app?path=/azure-pipelines.yml)
+## [Мой pipeline](https://github.com/ioannsnakej/azure-pipelines-k3s/blob/main/azure-pipelines.yml)
 
-## Создал собственный пул агентов [self-hosted](https://tfs.msk.evraz.com/tfs/%D0%A2%D0%B5%D1%81%D1%82%D0%BE%D0%B2%D0%B0%D1%8F%20%D0%BA%D0%BE%D0%BB%D0%BB%D0%B5%D0%BA%D1%86%D0%B8%D1%8F/Ivan-Khodyrev/_settings/agentqueues?queueId=1333&view=jobs) и подключил  [агента](https://tfs.msk.evraz.com/tfs/%D0%A2%D0%B5%D1%81%D1%82%D0%BE%D0%B2%D0%B0%D1%8F%20%D0%BA%D0%BE%D0%BB%D0%BB%D0%B5%D0%BA%D1%86%D0%B8%D1%8F/Ivan-Khodyrev/_settings/agentqueues?queueId=1333&view=agents)
-
+## Создал собственный пул агентов self-hosted
+![image.png](/.attachments/agent-pull.png)
+![image.png](/.attachments/agent.png)
 ## Написал на ВМ-агенте простой systemd-unit, чтобы он поддерживал агента в статусе онлайн:
 
     sudo nano /etc/systemd/system/azure-agent.service
@@ -55,7 +58,9 @@
 - `azure-agent01 (192.168.56.5)` - control-plane + azure-agent
 - `k3s-worker (192.168.56.4)` - worker node  
 
-Так как по непонятным причинам после установки с помощью `curl -sfL https://get.k3s.io | sh -` сервиc `k3s-agent.service` отказывался стартовать, было принято решение локально создать файл скрипта `install-k3s.sh`.  
+Для установки k3s был использован официальный скрипт, адаптированный под окружение.
+
+Для установки k3s был использован официальный скрипт, адаптированный под окружение. Создал файл скрипта `install-k3s.sh`.  
 В данный файл было скопированно содержимое [Официального скрипта](https://get.k3s.io/)  
 После чего данный скрипт был запущен:
 1. На `azure-agent01 (192.168.56.5)` командой `./install-k3s.sh`
@@ -80,6 +85,7 @@
     sudo chmod 755 /usr/local/bin/helm
     sudo chown root:root /usr/local/bin/helm
 
+##[Мой Helm](https://github.com/ioannsnakej/azure-pipelines-k3s/tree/main/helm/hello-app)
 ## Настраиваем taints, чтобы на control plane не поднимались поды:
 
     kubectl taint nodes azure-agent01 node-role.kubernetes.io/control-plane:NoSchedule
